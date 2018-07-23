@@ -15,12 +15,13 @@ class DummyText(object):
     The main entry point for DummyText api which lets you produce random text in Malayalam, with customizable options.
     """
 
-    def __init__(self, charset=set(), limit=0, hasnum=False):
+    def __init__(self, charset=set(), limit=0, hasnum=False, punctuate=True):
         super(DummyText, self).__init__()
         self._charset = charset or frozenset(DEFAULT_WORDS)
         self._limit = limit
         self._text = ''
         self._hasnum = hasnum
+        self._punctuate = punctuate
 
     @property
     def text(self):
@@ -37,4 +38,3 @@ class DummyText(object):
     @property
     def hasnum(self):
         return self._hasnum
-
