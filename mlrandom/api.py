@@ -51,19 +51,30 @@ class DummyText(object):
     def hasnum(self):
         return self._hasnum
 
-    def _gen_word(self, minlen=2, maxlen=8, charset=[]):
-        atleast = random.randint(minlen, 4)
-        atmost = random.randint(5, maxlen)
+    def _gen_word(self, minlen=2, maxlen=8, charset=[], *args, **kwargs):
+        if minlen > maxlen:
+            raise ValueError('minlen cannot be larger than maxlen')
+
+        if isinstance(charset, str):
+            charset = set([ch for ch in charset])
+
+        atleast = random.randint(minlen, minlen+2)
+        atmost = random.randint(minlen+3, maxlen)
         size = random.randint(atleast, atmost)
         word = ''
         while(len(word) < size):
             word += random.choice(charset or self.charset)
         return word
 
-    def gen_word(self,minlen=2,maxlen=8,charset=[]):
+    def gen_word(self, minlen=2, maxlen=8, charset=[], *args, **kwargs):
         '''
         This function returns a random sized word that may or may not be meaningful
         minlen and maxlen can be used to vary the word's total length.
-        Additionally, you can also pass a character set as a list.
+        Additionally, you can also pass a character set as a list or a string.
         '''
-        return self._gen_word(minlen=2,maxlen=8,charset=[])
+        return self._gen_word(minlen=2, maxlen=8, charset=[], *args, **kwargs)
+
+    def _gen_sentence(self, word_count=8, *args, **kwargs):
+        sentence = [self._gen_word(*args, **kwargs) +
+                    ' ' for _ in range(word_count)]
+        return ''.join(sentence).strip()
