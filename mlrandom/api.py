@@ -10,7 +10,7 @@ DEFAULT_WORDS = [
     'ൃ', 'ൄ', 'െ', 'േ', 'ൈ', 'ൊ', 'ോ', 'ൌ', '്', 'ൎ'
 ]
 
-PUNCTUATIONS = [' ', ', ', '. ']
+PUNCTUATIONS = [', ', '. ', '? ','?\n','.\n']
 # DEFAULT_WORDS = dict(
 #     vowels=['അ', 'ആ', 'ഇ', 'ഈ', 'ഉ', 'ഊ', 'ഋ', 'ൠ', 'ഌ',
 #             'ൡ', 'എ', 'ഏ', 'ഐ', 'ഒ', 'ഓ', 'ഔ'],
@@ -64,6 +64,8 @@ class DummyText(object):
         word = ''
         while(len(word) < size):
             word += random.choice(charset or self.charset)
+
+        self._text+=word
         return word
 
     def gen_word(self, minlen=2, maxlen=8, charset=[], *args, **kwargs):
@@ -77,7 +79,9 @@ class DummyText(object):
     def _gen_sentence(self, word_count=8, *args, **kwargs):
         sentence = [self._gen_word(*args, **kwargs) +
                     ' ' for _ in range(word_count)]
-        return ''.join(sentence).strip()
+        sentence = ''.join(sentence).strip() + random.choice(PUNCTUATIONS)
+        self._text += sentence
+        return sentence
 
     def gen_sentence(self, word_count=8, *args, **kwargs):
         '''
@@ -88,4 +92,24 @@ class DummyText(object):
         '''
         return self._gen_sentence(word_count=8, *args, **kwargs)
 
-        
+    def _gen_paragraph(
+            self, min_sentence=5, max_sentence=10, paras=5, *args, **kwargs):
+        para = ''
+        text = []
+        atleast = random.randint(min_sentence, min_sentence+2)
+        atmost = random.randint(min_sentence+3, max_sentence)
+
+        size = random.randint(atleast, atmost)
+
+        for _ in range(paras):
+            while(len(para) < size):
+                para += self._gen_sentence()
+                if self._punctuate:
+                    para + random.choice(PUNCTUATIONS)
+            text.append(para)
+            para = ''
+
+        text = ''.join(text)
+        self._text += text
+        return text
+
