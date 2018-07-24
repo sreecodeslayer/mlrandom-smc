@@ -32,7 +32,7 @@ class DummyText(object):
         self._charset = charset or DEFAULT_WORDS
         self._limit = limit
         self._text = ''
-        self._hasnum = hasnum # Todo:
+        self._hasnum = hasnum  # Todo:
         self._punctuate = punctuate
 
     @property
@@ -75,7 +75,7 @@ class DummyText(object):
         minlen(default: 2) and maxlen(default: 8) can be used to vary the word's total length.
         Additionally, you can also pass a character set as a list or a string(default: []).
         '''
-        return self._gen_word(minlen=minlen, maxlen=maxlen, charset=charset, *args, **kwargs)
+        return self._gen_word(minlen, maxlen, charset, *args, **kwargs)
 
     def _gen_sentence(self, word_count=8, *args, **kwargs):
         sentence = [self._gen_word(*args, **kwargs) +
@@ -93,7 +93,7 @@ class DummyText(object):
         Params minlen and maxlen can be used to vary each word's length.
         Additionally, you can also pass a character set as a list or a string to be used while generating the sentence.
         '''
-        return self._gen_sentence(word_count=word_count, *args, **kwargs)
+        return self._gen_sentence(word_count, *args, **kwargs)
 
     def _gen_paragraph(
             self, paras=5, *args, **kwargs):
@@ -107,11 +107,11 @@ class DummyText(object):
             scount = 0
             para = ''
             while(scount < size):
-                para += self._gen_sentence(*args,**kwargs)
+                para += self._gen_sentence(*args, **kwargs)
                 if self._punctuate:
                     para + random.choice(PUNCTUATIONS).strip()
 
-                scount+=1
+                scount += 1
             text.append(para.strip())
         text = '\n'.join(text)
         self._text += text
@@ -123,4 +123,4 @@ class DummyText(object):
         It also supports specifying a paragraph count (default: 5), which will be separated by a full stop and a new line character if punctuations are enabled.
         All other params of `gen_sentence` and `gen_word` are supported.
         '''
-        return self._gen_paragraph(paras=paras,*args, **kwargs)
+        return self._gen_paragraph(paras, *args, **kwargs)
