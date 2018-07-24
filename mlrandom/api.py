@@ -10,7 +10,7 @@ DEFAULT_WORDS = [
     'ൃ', 'ൄ', 'െ', 'േ', 'ൈ', 'ൊ', 'ോ', 'ൌ', '്', 'ൎ'
 ]
 
-PUNCTUATIONS = [' ',', ','. ']
+PUNCTUATIONS = [' ', ', ', '. ']
 # DEFAULT_WORDS = dict(
 #     vowels=['അ', 'ആ', 'ഇ', 'ഈ', 'ഉ', 'ഊ', 'ഋ', 'ൠ', 'ഌ',
 #             'ൡ', 'എ', 'ഏ', 'ഐ', 'ഒ', 'ഓ', 'ഔ'],
@@ -51,11 +51,19 @@ class DummyText(object):
     def hasnum(self):
         return self._hasnum
 
-    def _gen_word(self, count=1):
-        atleast = random.randint(2, 4)
-        atmost = random.randint(5, 8)
-        wordlen = random.randint(atleast, atmost)
+    def _gen_word(self, minlen=2, maxlen=8, charset=[]):
+        atleast = random.randint(minlen, 4)
+        atmost = random.randint(5, maxlen)
+        size = random.randint(atleast, atmost)
         word = ''
-        while(len(word) < wordlen):
-            word += random.choice(self.charset)
+        while(len(word) < size):
+            word += random.choice(charset or self.charset)
         return word
+
+    def gen_word(self,minlen=2,maxlen=8,charset=[]):
+        '''
+        This function returns a random sized word that may or may not be meaningful
+        minlen and maxlen can be used to vary the word's total length.
+        Additionally, you can also pass a character set as a list.
+        '''
+        return self._gen_word(minlen=2,maxlen=8,charset=[])
