@@ -106,7 +106,7 @@ class DummyText(object):
             scount = 0
             para = ''
             while(scount < size):
-                para += self._gen_sentence()
+                para += self._gen_sentence(*args,**kwargs)
                 if self._punctuate:
                     para + random.choice(PUNCTUATIONS).strip()
 
