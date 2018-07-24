@@ -55,15 +55,16 @@ class DummyText(object):
         if minlen > maxlen:
             raise ValueError('minlen cannot be larger than maxlen')
 
+        charset = charset or self.charset
         if isinstance(charset, str):
-            charset = set([ch for ch in charset])
+            charset = list(set([ch for ch in charset]))
 
         atleast = random.randint(minlen, minlen+2)
         atmost = random.randint(minlen+3, maxlen)
         size = random.randint(atleast, atmost)
         word = ''
         while(len(word) < size):
-            word += random.choice(charset or self.charset)
+            word += random.choice(charset)
 
         self._text += word
         return word
