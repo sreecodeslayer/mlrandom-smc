@@ -32,7 +32,7 @@ class DummyText(object):
         self._charset = charset or DEFAULT_WORDS
         self._limit = limit
         self._text = ''
-        self._hasnum = hasnum
+        self._hasnum = hasnum # Todo:
         self._punctuate = punctuate
 
     @property
