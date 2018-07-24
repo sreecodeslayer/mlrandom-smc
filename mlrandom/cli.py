@@ -29,6 +29,19 @@ def create_parser():
     add_help_arg(wrdparser_group)
     add_punctuate_arg(wrdparser_group)
     add_charset_arg(wrdparser_group)
+
+    senparser = subparsers.add_parser(
+        'sentence',
+        add_help=False,
+        help='Generate a random sentence',
+        description='Generate a random sentence from a charset')
+    senparser_group = senparser.add_argument_group(title='Options')
+    add_word_args(senparser)
+    add_help_arg(senparser_group)
+    add_punctuate_arg(senparser_group)
+    add_charset_arg(senparser_group)
+    add_sentence_args(senparser_group)
+
     return parser
 
 
@@ -45,6 +58,15 @@ def add_word_args(group):
         default=8,
         dest='maxlen',
         help='The maximum number of characeters to be required in a word.')
+
+
+def add_sentence_args(group):
+    group.add_argument(
+        '--wordcount', '-wc',
+        type=int,
+        default=8,
+        dest='wordcount',
+        help='The maximum number of words to be required in a sentence.')
 
 
 def str2bool(v):
@@ -93,4 +115,8 @@ def cli(args=sys.argv[1:]):
     elif ns.command == 'word':
         args = [ns.minlen, ns.maxlen, ns.charset]
         print(dummy.gen_word(*args))
+        return
+    elif ns.command == 'sentence':
+        args = [ns.minlen, ns.maxlen, ns.charset]
+        print(dummy.gen_sentence(ns.wordcount, *args))
         return
