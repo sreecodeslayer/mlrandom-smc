@@ -6,5 +6,10 @@ setup(
     author='Sreenadh TC', author_email='kesav.tc8@gmail.com',
     packages=find_packages(),
     install_requires=REQUIRES,
-    zip_safe=False
+    zip_safe=False,
+    entry_points={
+        'console_scripts': [
+            'mlrandom = mlrandom.cli:cli',
+        ],
+    },
 )
