@@ -69,8 +69,8 @@ class DummyText(object):
     def gen_word(self, minlen=2, maxlen=8, charset=[], *args, **kwargs):
         '''
         This function returns a random sized word that may or may not be meaningful
-        minlen and maxlen can be used to vary the word's total length.
-        Additionally, you can also pass a character set as a list or a string.
+        minlen(default: 2) and maxlen(default: 8) can be used to vary the word's total length.
+        Additionally, you can also pass a character set as a list or a string(default: []).
         '''
         return self._gen_word(minlen=2, maxlen=8, charset=[], *args, **kwargs)
 
@@ -78,3 +78,14 @@ class DummyText(object):
         sentence = [self._gen_word(*args, **kwargs) +
                     ' ' for _ in range(word_count)]
         return ''.join(sentence).strip()
+
+    def gen_sentence(self, word_count=8, *args, **kwargs):
+        '''
+        This function returns a random sized sentence that may or may not be meaningful
+        The function takes an optional word_count for the sentence to have (default: 8), and all other arguments suported by the method: gen_word
+        Params minlen and maxlen can be used to vary each word's length.
+        Additionally, you can also pass a character set as a list or a string to be used while generating the sentence.
+        '''
+        return self._gen_sentence(word_count=8, *args, **kwargs)
+
+        
