@@ -10,7 +10,7 @@ DEFAULT_WORDS = [
     'ൃ', 'ൄ', 'െ', 'േ', 'ൈ', 'ൊ', 'ോ', 'ൌ', '്', 'ൎ'
 ]
 
-PUNCTUATIONS = [', ', '. ', '? ','?\n','.\n']
+PUNCTUATIONS = [', ', '. ', '? ']
 # DEFAULT_WORDS = dict(
 #     vowels=['അ', 'ആ', 'ഇ', 'ഈ', 'ഉ', 'ഊ', 'ഋ', 'ൠ', 'ഌ',
 #             'ൡ', 'എ', 'ഏ', 'ഐ', 'ഒ', 'ഓ', 'ഔ'],
@@ -65,7 +65,7 @@ class DummyText(object):
         while(len(word) < size):
             word += random.choice(charset or self.charset)
 
-        self._text+=word
+        self._text += word
         return word
 
     def gen_word(self, minlen=2, maxlen=8, charset=[], *args, **kwargs):
@@ -74,12 +74,14 @@ class DummyText(object):
         minlen(default: 2) and maxlen(default: 8) can be used to vary the word's total length.
         Additionally, you can also pass a character set as a list or a string(default: []).
         '''
-        return self._gen_word(minlen=2, maxlen=8, charset=[], *args, **kwargs)
+        return self._gen_word(minlen=minlen, maxlen=maxlen, charset=charset, *args, **kwargs)
 
     def _gen_sentence(self, word_count=8, *args, **kwargs):
         sentence = [self._gen_word(*args, **kwargs) +
                     ' ' for _ in range(word_count)]
-        sentence = ''.join(sentence).strip() + random.choice(PUNCTUATIONS)
+        sentence = ''.join(sentence).strip()
+        if self._punctuate:
+            sentence += random.choice(PUNCTUATIONS)
         self._text += sentence
         return sentence
 
@@ -90,26 +92,34 @@ class DummyText(object):
         Params minlen and maxlen can be used to vary each word's length.
         Additionally, you can also pass a character set as a list or a string to be used while generating the sentence.
         '''
-        return self._gen_sentence(word_count=8, *args, **kwargs)
+        return self._gen_sentence(word_count=word_count, *args, **kwargs)
 
     def _gen_paragraph(
-            self, min_sentence=5, max_sentence=10, paras=5, *args, **kwargs):
+            self, paras=5, *args, **kwargs):
         para = ''
         text = []
-        atleast = random.randint(min_sentence, min_sentence+2)
-        atmost = random.randint(min_sentence+3, max_sentence)
+        atleast = random.randint(5, 8)
+        atmost = random.randint(8, 10)
 
         size = random.randint(atleast, atmost)
-
         for _ in range(paras):
-            while(len(para) < size):
+            scount = 0
+            para = ''
+            while(scount < size):
                 para += self._gen_sentence()
                 if self._punctuate:
-                    para + random.choice(PUNCTUATIONS)
-            text.append(para)
-            para = ''
+                    para + random.choice(PUNCTUATIONS).strip()
 
-        text = ''.join(text)
+                scount+=1
+            text.append(para.strip())
+        text = '\n'.join(text)
         self._text += text
         return text
 
+    def gen_paragraph(self, paras=5, *args, **kwargs):
+        '''
+        This function returns a random sized paragraph that may or may not be meaningful
+        It also supports specifying a paragraph count (default: 5), which will be separated by a full stop and a new line character if punctuations are enabled.
+        All other params of `gen_sentence` and `gen_word` are supported.
+        '''
+        return self._gen_paragraph(paras=paras,*args, **kwargs)
