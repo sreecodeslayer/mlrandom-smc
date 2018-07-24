@@ -42,6 +42,19 @@ def create_parser():
     add_charset_arg(senparser_group)
     add_sentence_args(senparser_group)
 
+    paraparser = subparsers.add_parser(
+        'paragraphs',
+        add_help=False,
+        help='Generate multiple random paragraphs',
+        description='Generate a random paragraphs from a charset')
+    paraparser_group = paraparser.add_argument_group(title='Options')
+    add_word_args(paraparser)
+    add_help_arg(paraparser_group)
+    add_punctuate_arg(paraparser_group)
+    add_charset_arg(paraparser_group)
+    add_sentence_args(paraparser_group)
+    add_para_args(paraparser_group)
+
     return parser
 
 
@@ -67,6 +80,15 @@ def add_sentence_args(group):
         default=8,
         dest='wordcount',
         help='The maximum number of words to be required in a sentence.')
+
+
+def add_para_args(group):
+    group.add_argument(
+        '--paracount', '-pc',
+        type=int,
+        default=5,
+        dest='paracount',
+        help='The maximum number of paragraphs to be required in the text.')
 
 
 def str2bool(v):
@@ -119,4 +141,8 @@ def cli(args=sys.argv[1:]):
     elif ns.command == 'sentence':
         args = [ns.minlen, ns.maxlen, ns.charset]
         print(dummy.gen_sentence(ns.wordcount, *args))
+        return
+    elif ns.command == 'paragraphs':
+        args = [ns.wordcount,ns.minlen, ns.maxlen, ns.charset]
+        print(dummy.gen_paragraph(ns.paracount, *args))
         return
