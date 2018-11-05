@@ -638,8 +638,14 @@ Simple python interface for mlmorph using liblibhfst-python.
 """
 
 import os
-import regex
-import libhfst
+try:
+    import regex
+except ImportError:
+    import re as regex
+try:
+    import libhfst
+except ImportError:
+    import hfst as libhfst
 
 
 class Mlmorph:
@@ -647,7 +653,7 @@ class Mlmorph:
     def __init__(self, verbosity=False):
         """Construct Mlmorph with given verbosity for printouts."""
         self._verbosity = verbosity
-        self.fsa = './malayalam.a'
+        self.fsa = os.path.join(os.path.dirname(__file__), 'malayalam.a')
         self.transducer = None
         self.analyser = None
         self.generator = None

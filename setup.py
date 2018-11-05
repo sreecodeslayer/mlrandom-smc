@@ -1,5 +1,7 @@
 from setuptools import setup, find_packages
-REQUIRES = []
+REQUIRES = [
+    'hfst>=3.15.0.0b0',
+]
 setup(
     name='mlrandom', version='alpha-0.0.1',
     description='mlrandom is a simple random text generator for Malayalam',
