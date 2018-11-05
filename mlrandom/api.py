@@ -1,25 +1,6 @@
 import random
-
-DEFAULT_WORDS = [
-    'അ', 'ആ', 'ഇ', 'ഈ', 'ഉ', 'ഊ', 'ഋ', 'ൠ', 'ഌ',
-    'ൡ', 'എ', 'ഏ', 'ഐ', 'ഒ', 'ഓ', 'ഔ', 'ക', 'ഖ',
-    'ഗ', 'ഘ', 'ങ', 'ച', 'ഛ', 'ജ', 'ഝ', 'ഞ', 'ട', 'ഠ',
-    'ഡ', 'ഢ', 'ണ', 'ത', 'ഥ', 'ദ', 'ധ', 'ന', 'പ', 'ഫ', 'ബ',
-    'ഭ', 'മ', 'യ', 'ര', 'ല', 'വ', 'ശ', 'ഷ', 'സ', 'ഹ', 'ള',
-    'ഴ', 'റ', 'ഀ', 'ഁ', 'ം', 'ഃ', 'ാ', 'ി', 'ീ', 'ു', 'ൂ',
-    'ൃ', 'ൄ', 'െ', 'േ', 'ൈ', 'ൊ', 'ോ', 'ൌ', '്', 'ൎ'
-]
-
-PUNCTUATIONS = [', ', '. ', '? ']
-# DEFAULT_WORDS = dict(
-#     vowels=['അ', 'ആ', 'ഇ', 'ഈ', 'ഉ', 'ഊ', 'ഋ', 'ൠ', 'ഌ',
-#             'ൡ', 'എ', 'ഏ', 'ഐ', 'ഒ', 'ഓ', 'ഔ'],
-#     consonants=['ക', 'ഖ', 'ഗ', 'ഘ', 'ങ', 'ച', 'ഛ', 'ജ', 'ഝ', 'ഞ', 'ട', 'ഠ',
-#                 'ഡ', 'ഢ', 'ണ', 'ത', 'ഥ', 'ദ', 'ധ', 'ന', 'പ', 'ഫ', 'ബ',
-#                 'ഭ', 'മ', 'യ', 'ര', 'ല', 'വ', 'ശ', 'ഷ', 'സ', 'ഹ', 'ള',
-#                 'ഴ', 'റ'],
-#     diacs=['ഀ', 'ഁ', 'ം', 'ഃ', 'ാ', 'ി', 'ീ', 'ു', 'ൂ',
-#            'ൃ', 'ൄ', 'െ', 'േ', 'ൈ', 'ൊ', 'ോ', 'ൌ', '്', 'ൎ'])
+from mlrandom.morphology import Mlmorph
+from mlrandom.constants import *
 
 
 class DummyText(object):
@@ -27,17 +8,24 @@ class DummyText(object):
     The main entry point for DummyText api which lets you produce random text in Malayalam, with customizable options.
     """
 
-    def __init__(self, charset=set(), limit=0, hasnum=False, punctuate=True):
+    def __init__(self, charset=set(), limit=0, hasnum=False,
+                 punctuate=True, logical=True):
         super(DummyText, self).__init__()
         self._charset = charset or DEFAULT_WORDS
         self._limit = limit
         self._text = ''
         self._hasnum = hasnum  # Todo:
         self._punctuate = punctuate
+        self._islogical = logical
+        self.morph = Mlmorph()
 
     @property
     def text(self):
         return self._text
+
+    @property
+    def islogical(self):
+        return self._islogical
 
     @property
     def charset(self):
@@ -66,7 +54,13 @@ class DummyText(object):
         while(len(word) < size):
             word += random.choice(charset)
 
-        self._text += word
+        meaningful = False
+        if self.islogical:
+            while not meaningful:
+                word = self._gen_word(minlen, maxlen, charset, *args, **kwargs)
+
+                self._text += word
+
         return word
 
     def gen_word(self, minlen=2, maxlen=8, charset=[], *args, **kwargs):
