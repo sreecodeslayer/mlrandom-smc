@@ -7,6 +7,7 @@ setup(
     packages=find_packages(),
     install_requires=REQUIRES,
     zip_safe=False,
+    package_data={'mlrandom': ['morphology/*.a']},
     entry_points={
         'console_scripts': [
             'mlrandom = mlrandom.cli:cli',
