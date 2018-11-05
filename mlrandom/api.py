@@ -9,7 +9,7 @@ class DummyText(object):
     """
 
     def __init__(self, charset=set(), limit=0, hasnum=False,
-                 punctuate=True, logical=True):
+                 punctuate=True, logical=True, apply_rules=True):
         super(DummyText, self).__init__()
         self._charset = charset or DEFAULT_WORDS
         self._limit = limit
@@ -17,6 +17,7 @@ class DummyText(object):
         self._hasnum = hasnum  # Todo:
         self._punctuate = punctuate
         self._islogical = logical
+        self._applyrules = logical or apply_rules
         self.morph = Mlmorph()
 
     @property
@@ -39,6 +40,35 @@ class DummyText(object):
     def hasnum(self):
         return self._hasnum
 
+    # Rules
+
+    def _startswith_consonant_vowel(self, word):
+        try:
+            tok = str(word)[0]
+            rule = tok in (
+                self.charset['constants'] | tok in self.charset['vowels'])
+            return rule
+        except IndexError:
+            return False
+
+    def _no_following_vowel(self, word):
+        try:
+            tok = str(word)
+            for char in tok:
+                if char in self.charset['vowels']:
+                    pos = tok.index(char)
+                    if tok[pos+1] in self.charset['vowels']:
+                        return False
+            return True
+        except IndexError:
+            return True
+
+    def _vowel_at_begining_only(self, word, size):
+        cutoff = int(size/2)
+        rule = set(list(word[cutoff:size])).issubset(
+            self.charset['vowels'])
+        return not rule
+
     def _gen_word(self, minlen=2, maxlen=8, charset=[], *args, **kwargs):
         if minlen > maxlen:
             raise ValueError('minlen cannot be larger than maxlen')
@@ -53,14 +83,6 @@ class DummyText(object):
         word = ''
         while(len(word) < size):
             word += random.choice(charset)
-
-        meaningful = False
-        if self.islogical:
-            while not meaningful:
-                word = self._gen_word(minlen, maxlen, charset, *args, **kwargs)
-
-                self._text += word
-
         return word
 
     def gen_word(self, minlen=2, maxlen=8, charset=[], *args, **kwargs):
@@ -69,7 +91,18 @@ class DummyText(object):
         minlen(default: 2) and maxlen(default: 8) can be used to vary the word's total length.
         Additionally, you can also pass a character set as a list or a string(default: []).
         '''
-        return self._gen_word(minlen, maxlen, charset, *args, **kwargs)
+
+        meaningful = False
+        charset = charset or self.charset
+        word = self._gen_word(minlen, maxlen, charset, *args, **kwargs)
+        if self.islogical:
+            while not meaningful:
+                word = self._gen_word(minlen, maxlen, charset, *args, **kwargs)
+                if self.morph.analyse(word):
+                    meaningful = True
+                    self._text += word
+                    return word
+        return word
 
     def _gen_sentence(self, word_count=8, *args, **kwargs):
         sentence = [self._gen_word(*args, **kwargs) +
