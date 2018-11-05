@@ -63,10 +63,11 @@ class DummyText(object):
         except IndexError:
             return True
 
-    def _vowel_at_begining_only(self, word, size):
+    def _vowel_at_begining_only(self, word):
+        size = len(word)
         cutoff = int(size/2)
-        rule = set(list(word[cutoff:size])).issubset(
-            self.charset['vowels'])
+        chars = list(word[cutoff:size])
+        rule = set(chars) & (self.charset['vowels'] | self.charset['diacs'])
         return not rule
 
     def _gen_word(self, minlen=2, maxlen=8, charset=[], *args, **kwargs):
