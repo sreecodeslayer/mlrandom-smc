@@ -1,5 +1,5 @@
 import random
-from mlrandom.morphology import Mlmorph
+from mlmorph import Analyser as Mlmorph
 from mlrandom.constants import *
 
 
@@ -83,7 +83,10 @@ class DummyText(object):
         size = random.randint(atleast, atmost)
         word = ''
         while(len(word) < size):
-            word += random.choice(charset)
+            word += random.choice(list(
+                charset['vowels'] | charset['consonants'])
+            )
+            word += random.choice(list(charset['diacs']))
         return word
 
     def gen_word(self, minlen=2, maxlen=8, charset=[], *args, **kwargs):
@@ -106,7 +109,7 @@ class DummyText(object):
         return word
 
     def _gen_sentence(self, word_count=8, *args, **kwargs):
-        sentence = [self._gen_word(*args, **kwargs) +
+        sentence = [self.gen_word(*args, **kwargs) +
                     ' ' for _ in range(word_count)]
         sentence = ''.join(sentence).strip()
         if self._punctuate:

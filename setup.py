@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 REQUIRES = [
-    'hfst>=3.15.0.0b0',
+    'mlmorph'
 ]
 setup(
     name='mlrandom', version='alpha-0.0.1',
@@ -9,7 +9,6 @@ setup(
     packages=find_packages(),
     install_requires=REQUIRES,
     zip_safe=False,
-    package_data={'mlrandom': ['morphology/*.a']},
     entry_points={
         'console_scripts': [
             'mlrandom = mlrandom.cli:cli',
