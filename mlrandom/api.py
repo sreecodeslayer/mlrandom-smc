@@ -70,11 +70,8 @@ class DummyText(object):
         rule = set(chars) & (self.charset['vowels'] | self.charset['diacs'])
         return not rule
 
-    def _gen_word(self, minlen=2, maxlen=8, charset=[], *args, **kwargs):
-        if minlen > maxlen:
-            raise ValueError('minlen cannot be larger than maxlen')
+    def _gen_word(self, minlen, maxlen, charset, *args, **kwargs):
 
-        charset = charset or self.charset
         if isinstance(charset, str):
             charset = list(set([ch for ch in charset]))
 
@@ -83,22 +80,22 @@ class DummyText(object):
         size = random.randint(atleast, atmost)
         word = ''
         while(len(word) < size):
-            word += random.choice(list(
-                charset['vowels'] | charset['consonants'])
-            )
-            word += random.choice(list(charset['diacs']))
+            word += random.choice(ALPHAS)
+            word += random.choice(DIACS)
         return word
 
-    def gen_word(self, minlen=2, maxlen=8, charset=[], *args, **kwargs):
+    def gen_word(self, minlen=3, maxlen=8, charset=[], *args, **kwargs):
         '''
         This function returns a random sized word that may or may not be meaningful
         minlen(default: 2) and maxlen(default: 8) can be used to vary the word's total length.
         Additionally, you can also pass a character set as a list or a string(default: []).
         '''
+        if minlen > maxlen:
+            raise ValueError('minlen cannot be larger than maxlen')
 
         meaningful = False
         charset = charset or self.charset
-        word = self._gen_word(minlen, maxlen, charset, *args, **kwargs)
+        word = ''
         if self.islogical:
             while not meaningful:
                 word = self._gen_word(minlen, maxlen, charset, *args, **kwargs)
@@ -108,7 +105,7 @@ class DummyText(object):
                     return word
         return word
 
-    def _gen_sentence(self, word_count=8, *args, **kwargs):
+    def _gen_sentence(self, word_count, *args, **kwargs):
         sentence = [self.gen_word(*args, **kwargs) +
                     ' ' for _ in range(word_count)]
         sentence = ''.join(sentence).strip()
@@ -126,8 +123,7 @@ class DummyText(object):
         '''
         return self._gen_sentence(word_count, *args, **kwargs)
 
-    def _gen_paragraph(
-            self, paras=5, *args, **kwargs):
+    def _gen_paragraph(self, paras, *args, **kwargs):
         para = ''
         text = []
         atleast = random.randint(5, 8)
@@ -138,7 +134,7 @@ class DummyText(object):
             scount = 0
             para = ''
             while(scount < size):
-                para += self._gen_sentence(*args, **kwargs)
+                para += self.gen_sentence(*args, **kwargs)
                 if self._punctuate:
                     para + random.choice(PUNCTUATIONS).strip()
 
