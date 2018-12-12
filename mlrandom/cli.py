@@ -62,7 +62,7 @@ def add_word_args(group):
     group.add_argument(
         '--minlen',
         type=int,
-        default=2,
+        default=3,
         dest='minlen',
         help='The minimum number of characeters to be required in a word.')
     group.add_argument(
@@ -143,6 +143,6 @@ def cli(args=sys.argv[1:]):
         print(dummy.gen_sentence(ns.wordcount, *args))
         return
     elif ns.command == 'paragraphs':
-        args = [ns.wordcount,ns.minlen, ns.maxlen, ns.charset]
+        args = [ns.wordcount, ns.minlen, ns.maxlen, ns.charset]
         print(dummy.gen_paragraph(ns.paracount, *args))
         return
