@@ -45,9 +45,7 @@ class DummyText(object):
     def _startswith_consonant_vowel(self, word):
         try:
             tok = str(word)[0]
-            rule = tok in (
-                self.charset['constants'] | tok in self.charset['vowels'])
-            return rule
+            return tok in ALPHAS
         except IndexError:
             return False
 
@@ -70,13 +68,11 @@ class DummyText(object):
         rule = set(chars) & (self.charset['vowels'] | self.charset['diacs'])
         return not rule
 
-    def _gen_word(self, minlen, maxlen, charset, *args, **kwargs):
+    def _gen_word(self, atleast, atmost, charset, *args, **kwargs):
 
         if isinstance(charset, str):
             charset = list(set([ch for ch in charset]))
 
-        atleast = random.randint(minlen, minlen+2)
-        atmost = random.randint(minlen+3, maxlen)
         size = random.randint(atleast, atmost)
         word = ''
         while(len(word) < size):
@@ -95,14 +91,27 @@ class DummyText(object):
 
         meaningful = False
         charset = charset or self.charset
-        word = ''
+        word = self._gen_word(minlen, maxlen, charset, *args, **kwargs)
         if self.islogical:
             while not meaningful:
                 word = self._gen_word(minlen, maxlen, charset, *args, **kwargs)
+
+                # Apply rules here
+                if self._applyrules:
+                    if not self._startswith_consonant_vowel(word):
+                        word = self._gen_word(
+                            minlen, maxlen, charset, *args, **kwargs)
+
+                    if not self._no_following_vowel(word):
+                        word = self._gen_word(
+                            minlen, maxlen, charset, *args, **kwargs)
+                    if not self._vowel_at_begining_only(word):
+                        word = self._gen_word(
+                            minlen, maxlen, charset, *args, **kwargs)
+
                 if self.morph.analyse(word):
                     meaningful = True
                     self._text += word
-                    return word
         return word
 
     def _gen_sentence(self, word_count, *args, **kwargs):
