@@ -10,6 +10,12 @@ def create_parser():
         description='Malayalam Random Text Generator'
         ' [Word | Sentence | Paragraphs]',
         epilog='''Run '%(prog)s --help'for more information.''')
+    parser.add_argument(
+        '--rules', '-r',
+        type=str2bool,
+        default=True,
+        dest='apply_rules',
+        help='Apply some basic rules when building words')
 
     subparsers = parser.add_subparsers(
         dest='command',
@@ -130,7 +136,7 @@ def cli(args=sys.argv[1:]):
     parser = create_parser()
     ns = parser.parse_args(args)
 
-    dummy = DummyText(punctuate=ns.punctuate)
+    dummy = DummyText(punctuate=ns.punctuate, apply_rules=ns.apply_rules)
     if not ns.command:
         parser.print_help()
         return
