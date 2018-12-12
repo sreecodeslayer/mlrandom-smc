@@ -19,3 +19,5 @@ DEFAULT_WORDS = dict(
                 'ഴ', 'റ'},
     diacs={'ഀ', 'ഁ', 'ം', 'ഃ', 'ാ', 'ി', 'ീ', 'ു', 'ൂ',
            'ൃ', 'ൄ', 'െ', 'േ', 'ൈ', 'ൊ', 'ോ', 'ൌ', '്', 'ൎ'})
+ALPHAS = tuple(DEFAULT_WORDS['vowels'] | DEFAULT_WORDS['consonants'])
+DIACS = tuple(DEFAULT_WORDS['diacs'])
