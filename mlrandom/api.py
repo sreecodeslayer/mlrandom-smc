@@ -77,7 +77,8 @@ class DummyText(object):
         word = ''
         while(len(word) < size):
             word += random.choice(ALPHAS)
-            word += random.choice(DIACS)
+            if random.choice(BOOLS):
+                word += random.choice(DIACS)
         return word
 
     def gen_word(self, minlen=3, maxlen=8, charset=[], *args, **kwargs):

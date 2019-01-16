@@ -10,6 +10,7 @@
 # ]
 
 PUNCTUATIONS = [', ', '. ', '? ']
+BOOLS = [True, False]
 DEFAULT_WORDS = dict(
     vowels={'അ', 'ആ', 'ഇ', 'ഈ', 'ഉ', 'ഊ', 'ഋ', 'ൠ', 'ഌ',
             'ൡ', 'എ', 'ഏ', 'ഐ', 'ഒ', 'ഓ', 'ഔ'},
